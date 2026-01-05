@@ -55,8 +55,6 @@ def bornes():
     driving_time_str = None
     total_distance_km = None
 
-    
-
     if request.method == "POST":
         start_address = request.form.get("start_address")
         end_address = request.form.get("end_address")
@@ -70,9 +68,7 @@ def bornes():
 
         else:
             selected_car = next((c for c in cars if c["id"] == vehicle_id), None)
-            # ===== AJOUT : ID numérique pour le SOAP =====
-            vehicle_index = cars.index(selected_car) + 1
-
+            print("IIIIICCCCCCCCCCCCCCIIIIIIIIIIIIII : ", selected_car)
 
             if not selected_car:
                 error = "Véhicule introuvable."
@@ -199,27 +195,80 @@ def bornes():
                     m.save(map_path)
                     map_generated = True
                     # ===============================
+                    # ⚡ CALCUL TEMPS DE RECHARGE
+                    # ===============================
+                    """
+                    battery_kwh = selected_car["battery"]["usable_kwh"]
+                    
+                    charge_time = 0
+                    stops = []
+
+                    for station in charging_stations:
+                        power = float(station.get("puissance", 50))  # kW
+                        energy = battery_kwh * 0.7  # 10% → 80%
+                        minutes = (energy / power) * 60
+
+                        charge_time += minutes
+
+                        station["recharge_minutes"] = round(minutes)
+
+
+                    # total_time en minutes
+                    total_time = round(driving_time + charge_time)
+                    """
+
+                    # ===============================
                     # ⚡ CALCUL VIA SERVICE SOAP
                     # ===============================
+                    print(soap_client.service)
 
-                    battery_kwh = selected_car["battery"]["usable_kwh"]
+                   
+                    if charging_stations:
+                        power = float(charging_stations[0].get("puissance", 50))
+                    else:
+                        power = 50  # défaut si pas de bornes
 
-                    # puissance moyenne (première borne ou valeur par défaut)
-                    charging_power = float(charging_stations[0].get("puissance", 50)) if charging_stations else 50
-
-                    soap_result = soap_client.service.calculate_travel_time_detailed(
-                    vehicle_index,
-                    float(total_distance_km),
-                    float(battery_kwh),
-                    float(charging_power)
+                    vehicle_id_str = str(selected_car["id"]).strip()
+                    soap_response = soap_client.service.calculate_travel_time_detailed(
+                        vehicle_id=vehicle_id_str,
+                        distance_km=float(total_distance_km),
+                        battery_kwh=float(selected_car["battery"]["usable_kwh"]),
+                        charging_power_kw=float(power)
                     )
-                    print("SOAP vehicle_id =", vehicle_index)
 
+                # Spyne renvoie un objet avec un attribut <operation_name>Result
+                soap_result = soap_response
+                print(soap_response)
+                print(dir(soap_response))
 
+                if soap_result is None:
+                    error = "Le service SOAP n'a pas retourné de résultat pour ce véhicule."
+                    total_time = driving_time = charge_time = stops = 0
+                else:
                     total_time = soap_result.total_time_minutes
                     driving_time = soap_result.driving_time_minutes
                     charge_time = soap_result.charging_time_minutes
                     stops = soap_result.stops
+
+                    
+                    # Conversion en heures + minutes
+                    hours = total_time // 60
+                    minutes = total_time % 60
+
+                    # Formattage sous forme "H h M min"
+                    total_time_str = f"{hours} h {minutes} " if hours > 0 else f"{minutes} "
+
+                    # Pareil pour charge_time
+                    charge_time = round(charge_time)
+                    charge_hours = charge_time // 60
+                    charge_minutes = charge_time % 60
+                    charge_time_str = f"{charge_hours} h {charge_minutes} " if charge_hours > 0 else f"{charge_minutes} "
+
+                    # Pareil pour driving_time
+                    driving_time = round(driving_time)
+                    driving_hours = driving_time // 60
+                    driving_minutes = driving_time % 60
+                    driving_time_str = f"{driving_hours} h {driving_minutes} " if driving_hours > 0 else f"{driving_minutes} "
 
 
     return render_template(
