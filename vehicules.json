@@ -1,0 +1,14 @@
+[
+    {
+        "id": 1,
+        "name": "Tesla Model 3",
+        "autonomy_km": 400,
+        "charging_time_h": 1
+    },
+    {
+        "id": 2,
+        "name": "Nissan Leaf",
+        "autonomy_km": 250,
+        "charging_time_h": 0.5
+    }
+]

@@ -1,0 +1,76 @@
+.vehicle-carousel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.vehicle-view {
+    width: 300px;
+    overflow: hidden;
+}
+
+.vehicle-slide {
+    display: none;
+    background: #f8f9fa;
+    border-radius: 18px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.vehicle-slide.active {
+    display: block;
+}
+
+.vehicle-slide img {
+    width: 100%;
+    height: 160px;
+    object-fit: contain;
+    margin-bottom: 15px;
+}
+
+.vehicle-info {
+    color: #2d3436;
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.select-btn {
+    background: linear-gradient(135deg, #00b894, #00cec9);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.select-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 184, 148, 0.4);
+}
+
+.nav-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.nav-btn:hover {
+    background: #5a67d8;
+}
+
+.select-btn.selected {
+    background: linear-gradient(135deg, #00b894, #00b894);
+    cursor: default;
+    box-shadow: 0 6px 25px rgba(0, 184, 148, 0.6);
+}

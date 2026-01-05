@@ -1,0 +1,7 @@
+Pour lancer le serveur :(verifier l'@ 172.0.0.1:8000/?wsdl) 
+python serveur.py
+
+
+
+Pour lancer l'app : (verifier l'@ 172.0.0.1:5050/?wsdl)
+python app.py 

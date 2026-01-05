@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>🚗 Liste des véhicules</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .car-card {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            background: #f7f7f7;
+        }
+        .title { font-weight: bold; font-size: 1.3em; }
+    </style>
+</head>
+<body>
+
+<h1>🚗 Liste des véhicules disponibles</h1>
+
+{% for c in cars %}
+<div>
+    <h2>{{ c.naming.make }} {{ c.naming.model }} {{ c.naming.version }}</h2>
+    <p>Batterie : {{ c.battery.usable_kwh }} kWh</p>
+    <p>Autonomie : {{ c.range.chargetrip_range.worst }} – {{ c.range.chargetrip_range.best }} km</p>
+    {% if c.media.image.thumbnail_url %}
+        <img src="{{ c.media.image.thumbnail_url }}" width="200">
+    {% endif %}
+</div>
+<hr>
+{% endfor %}
+<a href="{{ url_for('index') }}">← Retour</a>
+</body>
+</html>
+
+
